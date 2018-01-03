@@ -1,0 +1,21 @@
+#!/bin/bash
+
+function install_pyenv {
+    cd ~
+    curl -L https://raw.githubusercontent.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash
+    git clone https://github.com/yyuu/pyenv-virtualenvwrapper.git $PYENV_ROOT/plugins/pyenv-virtualenvwrapper
+
+    cat > ~/.bash_profile <<EOF
+export PYENV_ROOT=/opt/.pyenv
+export PATH=$PYENV_ROOT/bin:$PYENV_ROOT/plugins/pyenv-virtualenv/bin:\$PATH
+eval "\$(pyenv init -)"
+eval "\$(pyenv virtualenvwrapper)"
+EOF
+
+    source ~/.bash_profile
+    sudo apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
+                            libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils
+
+}
+export PYENV_ROOT="/opt/.pyenv"
+install_pyenv
