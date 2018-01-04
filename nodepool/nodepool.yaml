@@ -1,0 +1,153 @@
+elements-dir: /etc/nodepool/elements
+images-dir: /opt/nodepool_dib
+
+cron:
+  cleanup: '*/1 * * * *'
+  check: '*/15 * * * *'
+
+zmq-publishers:
+  - tcp://jenkins.cibook.oz:8888
+
+gearman-servers:
+  - host: gearman.cibook.oz
+
+zookeeper-servers:
+  - host: zookeeper.cibook.oz
+    port: 2181
+
+labels:
+  - name: ubuntu-trusty
+    image: ubuntu-trusty
+    ready-script: openzero.sh
+    min-ready: 3
+    providers:
+      - name: zte-pod13-RegionOne
+      - name: zte-pod11-RegionOne
+  - name: ubuntu-trusty-large
+    image: ubuntu-trusty-large
+    ready-script: openzero.sh
+    min-ready: 3
+    providers:
+      - name: zte-pod13-RegionOne
+      - name: zte-pod11-RegionOne
+
+providers:
+  - name: zte-pod13-RegionOne
+    region-name: 'RegionOne'
+    cloud: zte-pod13
+    nodepool-id: 'ci-book-1'
+    api-timeout: 60
+    boot-timeout: 120
+    max-servers: 16
+    rate: 0.001
+    # Remove this when glean has support for ipv6 on centos
+    ipv6-preferred: false
+    image-type: qcow2
+    template-hostname: 'ci-book-template-{image.name}-{timestamp}'
+    clean-floating-ips: true
+    images:
+      - name: ubuntu-trusty
+        min-ram: 2048
+        diskimage: ubuntu-trusty
+        username: jenkins
+        private-key: /home/nodepool/.ssh/id_rsa
+        config-drive: true
+        key-name: ci-key
+      - name: ubuntu-trusty-large
+        min-ram: 8192
+        diskimage: ubuntu-trusty
+        username: jenkins
+        private-key: /home/nodepool/.ssh/id_rsa
+        config-drive: true
+        key-name: ci-key
+  - name: zte-pod11-RegionOne
+    region-name: 'RegionOne'
+    cloud: zte-pod11
+    nodepool-id: 'ci-book-2'
+    api-timeout: 60
+    boot-timeout: 120
+    max-servers: 16
+    rate: 0.001
+    # Remove this when glean has support for ipv6 on centos
+    ipv6-preferred: false
+    image-type: qcow2
+    template-hostname: 'ci-book-template-{image.name}-{timestamp}'
+    clean-floating-ips: true
+    images:
+      - name: ubuntu-trusty
+        min-ram: 2048
+        diskimage: ubuntu-trusty
+        username: jenkins
+        private-key: /home/nodepool/.ssh/id_rsa
+        config-drive: true
+        key-name: ci-key
+      - name: ubuntu-trusty-large
+        min-ram: 8192
+        diskimage: ubuntu-trusty-large
+        username: jenkins
+        private-key: /home/nodepool/.ssh/id_rsa
+        config-drive: true
+        key-name: ci-key
+targets:
+  - name: jenkins-cibook
+    assign-via-gearman: True
+    hostname: ci-book-jenkins-{label.name}-{provider.name}-{node_id}
+
+diskimages:
+  - name: ubuntu-trusty
+    rebuild-age: 864000
+    elements:
+      - ubuntu-minimal
+      - vm
+      - cache-devstack
+      - infra-package-needs
+      #- initialize-urandom
+      - jenkins-slave
+      - simple-init
+      - openstack-repos
+      - nodepool-base
+      - prepare-node
+      - zuul-worker
+      - growroot
+      - stackviz
+      - openzero
+    release: trusty
+    env-vars:
+      TMPDIR: /opt/dib_tmp
+      DIB_CHECKSUM: '1'
+      DIB_IMAGE_CACHE: /opt/dib_cache
+      DIB_APT_LOCAL_CACHE: '0'
+      DIB_DISABLE_APT_CLEANUP: '1'
+      DIB_GRUB_TIMEOUT: '0'
+      DIB_DEBIAN_COMPONENTS: 'main,universe'
+      NODEPOOL_SCRIPTDIR: /etc/nodepool/scripts
+      NODEPOOL_SSH_KEY: AAAAB3NzaC1yc2EAAAADAQABAAABAQDHaEP31qpXO1DZVoVDvirS8gYNkiDxWyJLSx5nNB58WKs11/aLX4HzP0Y+WcIzHholnynGcBbpG/9eyUpbd2wsBS8tJtJcCcjHBrJ/bvfMjlUyR7uhpU7Pk1FgqyCvY7uaGJThhMVijQ59BY8E5YQIoZu+DnejVqAMyEobE0tcSwIKurRbEajyvrx1/f/o+feIy5AbPjIVqKCoIjfgrkFbicYo0LB+Hd/zEI3SukyU4KqHHHlyZ6+iGklF8chZJPnJM9QhQpGVTw93C13jW2DsWzz5CtOUgRbB1GQxzEC/w3GJ5KvtCKeEAiAvoWqH5SspUhbRpzfCYvvhRzbTRbDL 
+  - name: ubuntu-trusty-large
+    rebuild-age: 864000
+    elements:
+      - ubuntu-minimal
+      - vm
+      - cache-devstack
+      - infra-package-needs
+      #- initialize-urandom
+      - jenkins-slave
+      - simple-init
+      - openstack-repos
+      - nodepool-base
+      - prepare-node
+      - zuul-worker
+      - growroot
+      - stackviz
+      - openzero
+    release: trusty
+    env-vars:
+      TMPDIR: /opt/dib_tmp
+      DIB_CHECKSUM: '1'
+      DIB_IMAGE_CACHE: /opt/dib_cache
+      DIB_APT_LOCAL_CACHE: '0'
+      DIB_DISABLE_APT_CLEANUP: '1'
+      DIB_GRUB_TIMEOUT: '0'
+      DIB_DEBIAN_COMPONENTS: 'main,universe'
+      NODEPOOL_SCRIPTDIR: /etc/nodepool/scripts
+      NODEPOOL_SSH_KEY: AAAAB3NzaC1yc2EAAAADAQABAAABAQDHaEP31qpXO1DZVoVDvirS8gYNkiDxWyJLSx5nNB58WKs11/aLX4HzP0Y+WcIzHholnynGcBbpG/9eyUpbd2wsBS8tJtJcCcjHBrJ/bvfMjlUyR7uhpU7Pk1FgqyCvY7uaGJThhMVijQ59BY8E5YQIoZu+DnejVqAMyEobE0tcSwIKurRbEajyvrx1/f/o+feIy5AbPjIVqKCoIjfgrkFbicYo0LB+Hd/zEI3SukyU4KqHHHlyZ6+iGklF8chZJPnJM9QhQpGVTw93C13jW2DsWzz5CtOUgRbB1GQxzEC/w3GJ5KvtCKeEAiAvoWqH5SspUhbRpzfCYvvhRzbTRbDL 
+
