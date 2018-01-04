@@ -1,0 +1,1 @@
+-e git+https://github.com/databill/jenkins-view-builder.git#egg=jenkins_view_builder
