@@ -1,0 +1,6 @@
+- view:
+    type: list
+    name: test
+    description: test
+    includeRegex: test-.*
+    recurse: False
