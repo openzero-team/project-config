@@ -3,7 +3,7 @@
 # It checks that projects.yaml alphabetized and prints list of projects that
 # should be sorted.
 
-export TMPDIR=`/bin/mktemp -d`
+export TMPDIR=`mktemp -d`
 trap "rm -rf $TMPDIR" EXIT
 
 pushd $TMPDIR
