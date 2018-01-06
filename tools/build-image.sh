@@ -21,12 +21,13 @@
 
 set -e
 
-sudo apt-get install -y --force-yes qemu-utils
-sudo apt-get install -y --force-yes debootstrap
+sudo apt-get update -y
+sudo apt-get install -y --force-yes qemu-utils kpartx debootstrap
 sudo pip install -U diskimage-builder
 
 ELEMENTS_PATH=${ELEMENTS_PATH:-$WORKSPACE/nodepool/elements}
 DISTRO=${DISTRO:-ubuntu-minimal}
+DIB_RELEASE=${DIB_RELEASE:-trusty}
 IMAGE_NAME=${IMAGE_NAME:-devstack-gate}
 NODEPOOL_SCRIPTDIR=${NODEPOOL_SCRIPTDIR:-$WORKSPACE/nodepool/scripts}
 CONFIG_SOURCE=${CONFIG_SOURCE:-https://git.openstack.org/openstack-infra/system-config}
@@ -83,7 +84,8 @@ fi
 # export DIB_DEV_USER_PASSWORD=devuser
 
 # The list of elements here should match nodepool/nodepool.yaml
-sudo ELEMENTS_PATH=$ELEMENTS_PATH DISTRO=$DISTRO IMAGE_NAME=$IMAGE_NAME \
+sudo ELEMENTS_PATH=$ELEMENTS_PATH DISTRO=$DISTRO \
+    DIB_RELEASE=$DIB_RELEASE IMAGE_NAME=$IMAGE_NAME \
     NODEPOOL_SCRIPTDIR=$NODEPOOL_SCRIPTDIR CONFIG_SOURCE=$CONFIG_SOURCE \
     CONFIG_REF=$CONFIG_REF EXTRA_ELEMENTS=$EXTRA_ELEMENTS \
     ZUUL_USER_SSH_PUBLIC_KEY=$ZUUL_USER_SSH_PUBLIC_KEY \
@@ -92,7 +94,6 @@ sudo ELEMENTS_PATH=$ELEMENTS_PATH DISTRO=$DISTRO IMAGE_NAME=$IMAGE_NAME \
     vm \
     cache-devstack \
     infra-package-needs \
-    initialize-urandom \
     jenkins-slave \
     simple-init \
     openstack-repos \
