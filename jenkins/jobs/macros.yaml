@@ -1,0 +1,37 @@
+- builder:
+    name: zuul-git-prep
+    builders:
+      - shell: |
+          #!/bin/bash -xe
+          CLONEMAP=`mktemp`
+          function cleanup {
+              # In cases where zuul-cloner is aborted during a git
+              # clone operation, git will remove the git work tree in
+              # its cleanup. The work tree in these jobs is the
+              # workspace directory, which means that subsequent
+              # jenkins post-build actions can not run because the
+              # workspace has been removed.
+              # To reduce the likelyhood of this having an impact,
+              # recreate the workspace directory if needed
+              mkdir -p $WORKSPACE
+              rm -f $CLONEMAP
+          }
+          trap cleanup EXIT
+          cat > $CLONEMAP << EOF
+          clonemap:
+            - name: $ZUUL_PROJECT
+              dest: .
+          EOF
+          /usr/zuul-env/bin/zuul-cloner -m $CLONEMAP --cache-dir /opt/git \
+              http://gerrit.cibook.oz $ZUUL_PROJECT
+
+- publisher:
+    name: console-log
+    publishers:
+      - scp:
+          site: 'LogServer'
+          files:
+            - target: 'logs/$LOG_PATH'
+              copy-console: true
+              copy-after-failure: true
+

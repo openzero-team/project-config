@@ -199,22 +199,22 @@ project-templates:
       - '{name}-docbuild-rst-release'
 
 jobs:
-  - name: execute-puppet-apply-in-cimaster
-    voting: false
+  #- name: execute-puppet-apply-in-cimaster
+  #  voting: false
 
-  - name: execute-jenkins-view-apply-in-cimaster
-    voting: false
+  #- name: execute-jenkins-view-apply-in-cimaster
+  #  voting: false
 
 ########################################################################
 # The project list is sorted alphabetically.
 ########################################################################
 
 projects:
-  - name: citest
+  - name: sample-project
     template:
       - name: merge-check
     check:
-      - citest-mjobs
+      - sample-project-veriry
     gate:
-      - citest-mjobs
+      - sample-project-veriry
 

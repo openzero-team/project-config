@@ -1,0 +1,12 @@
+- job-template:
+    name: '{name}-verify'
+    node: ubuntu-trusty
+    builders:
+      - zuul-git-prep
+      - shell: |
+          #!/bin/bash -xe
+          echo "Job: $BUILD_TAG in Node: $NODE_NAME"
+          echo true
+    publishers:
+      - console-log
+
