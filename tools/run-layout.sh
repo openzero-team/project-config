@@ -31,7 +31,7 @@ if [ -d jenkins-job-builder ]; then
     cd jenkins-job-builder; git pull; cd ..
 else
     echo "Cloning jenkins-job-builder"
-    git clone https://git.openstack.org/openstack-infra/jenkins-job-builder --depth 1
+    git clone https://github.com/openzero-team/jenkins-job-builder.git --depth 1
 fi
 
 cd jenkins-job-builder
@@ -40,7 +40,7 @@ mkdir -p .test/new/config
 mkdir -p .test/new/out
 cd ../..
 
-cp jenkins/jobs/* .test/jenkins-job-builder/.test/new/config
+cp -r jenkins/jobs/* .test/jenkins-job-builder/.test/new/config
 cd .test/jenkins-job-builder
 tox -e compare-xml-new
 
