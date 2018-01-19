@@ -199,6 +199,8 @@ project-templates:
       - '{name}-docbuild-rst-release'
 
 jobs:
+  - name: sample-project-verify
+    voting: true
   #- name: execute-puppet-apply-in-cimaster
   #  voting: false
 
@@ -214,7 +216,7 @@ projects:
     template:
       - name: merge-check
     check:
-      - sample-project-veriry
+      - sample-project-verify
     gate:
-      - sample-project-veriry
+      - sample-project-verify
 
